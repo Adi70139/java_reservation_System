@@ -1,0 +1,36 @@
+public class Booking implements Runnable {
+    private FlightManager manager;
+    private String number;
+    private int seats;
+
+    private String name;
+    private String status;
+
+    public Booking(FlightManager manager, String number, int seats,String name) {
+        this.manager = manager;
+        this.number = number;
+        this.seats = seats;
+        this.name=name;
+        this.status = "pending";
+    }
+
+    public void run() {
+        Flight flight = manager.getFlight(number);
+        if (flight != null) {
+            if (flight.bookSeats(seats)) {
+                status = "booked";
+                System.out.println(name +" Booked " + seats + " seats on " + flight.getName() + " flight " + flight.getNumber());
+            } else {
+                status = "failed";
+                System.out.println(name+ " Failed to book " + seats + " seats on " + flight.getName() + " flight " + flight.getNumber() + ". Only " + flight.getSeats() + " seats available.");
+            }
+        } else {
+            status = "failed";
+            System.out.println("No such flight as " + number);
+        }
+    }
+
+    public String getStatus() {
+        return status;
+    }
+}
