@@ -1,0 +1,44 @@
+import java.util.concurrent.locks.ReentrantLock;
+
+public class Flight {
+    private String name;
+    private String number;
+    private int seats;
+    private ReentrantLock lock;
+
+    public Flight(String name, String number, int seats) {
+        this.name = name;
+        this.number = number;
+        this.seats = seats;
+        this.lock = new ReentrantLock();
+    }
+
+    public boolean bookSeats(int seats) {
+        if (lock.tryLock()) {
+            try {
+                if (this.seats >= seats) {
+                    this.seats -= seats;
+                    return true;
+                } else {
+                    return false;
+                }
+            } finally {
+                lock.unlock();
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public int getSeats() {
+        return seats;
+    }
+}
