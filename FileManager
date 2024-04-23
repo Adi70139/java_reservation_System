@@ -1,0 +1,25 @@
+import java.util.HashMap;
+import java.util.Map;
+
+public class FlightManager {
+    private Map<String, Flight> flights;
+
+    public FlightManager() {
+        flights = new HashMap<>();
+        flights.put("AA123", new Flight("American Airlines", "AA123", 20));
+        flights.put("UA456", new Flight("United Airlines", "UA456", 15));
+        flights.put("DL789", new Flight("Delta Airlines", "DL789", 30));
+    }
+
+    public synchronized boolean bookSeats(String flightNumber, int numSeats) {
+        Flight flight = flights.get(flightNumber);
+        if (flight != null) {
+            return flight.bookSeats(numSeats);
+        }
+        return false;
+    }
+
+    public Flight getFlight(String number) {
+        return flights.get(number);
+    }
+}
