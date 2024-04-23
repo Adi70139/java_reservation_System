@@ -1,1 +1,109 @@
 
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+public class Main {
+    private JFrame frame;
+    private JTextField numberOfUsersField;
+    private JTextField userNameField;
+    private JTextField flightNumberField;
+    private JTextField numSeatsField;
+    public static void main(String[] args) {
+        EventQueue.invokeLater(() -> {
+            try {
+                Main window = new Main();
+                window.frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    public Main() {
+        initialize();
+    }
+    private void initialize() {
+        frame = new JFrame("Flight Booking System");
+        frame.setBounds(100, 100, 450, 300);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JPanel inputPanel = new JPanel();
+        frame.getContentPane().add(inputPanel, BorderLayout.CENTER);
+        inputPanel.setLayout(null);
+        JLabel numberOfUsersLabel = new JLabel("Enter number of users:");
+        numberOfUsersLabel.setBounds(10, 10, 150, 25);
+        inputPanel.add(numberOfUsersLabel);
+        numberOfUsersField = new JTextField();
+        numberOfUsersField.setBounds(170, 10, 150, 25);
+        inputPanel.add(numberOfUsersField);
+        numberOfUsersField.setColumns(10);
+        JButton submitButton = new JButton("Submit");
+        submitButton.setBounds(330, 10, 100, 25);
+        inputPanel.add(submitButton);
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String numberOfUsersText = numberOfUsersField.getText();
+                if (numberOfUsersText.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Please enter a valid number of users.");
+                    return;
+                }
+                int numUsers = 0;
+                try {
+                    numUsers = Integer.parseInt(numberOfUsersText);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "Invalid input. Please enter a valid number.");
+                    return;
+                }
+                List<User> users = new ArrayList<>();
+                for (int i = 0; i < numUsers; i++) {
+                    String userName = JOptionPane.showInputDialog(frame, "Enter user " + (i + 1) + " name:");
+                    if (userName == null || userName.isEmpty()) {
+                        JOptionPane.showMessageDialog(frame, "Please enter a valid user name.");
+                        return;
+                    }
+                    String flightNumber = JOptionPane.showInputDialog(frame, "Enter flight number:");
+                    if (flightNumber == null || flightNumber.isEmpty()) {
+                        JOptionPane.showMessageDialog(frame, "Please enter a valid flight number.");
+                        return;
+                    }
+                    String numSeatsText = JOptionPane.showInputDialog(frame, "Enter number of seats:");
+                    if (numSeatsText == null || numSeatsText.isEmpty()) {
+                        JOptionPane.showMessageDialog(frame, "Please enter a valid number of seats.");
+                        return;
+                    }
+                    int numSeats = 0;
+                    try {
+                        numSeats = Integer.parseInt(numSeatsText);
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(frame, "Invalid input. Please enter a valid number.");
+                        return;
+                    }
+                    users.add(new User(userName, flightNumber, numSeats));
+                }
+                FlightManager manager = new FlightManager();
+                Thread[] threads = new Thread[numUsers];
+                for (int i = 0; i < numUsers; i++) {
+                    threads[i] = new Thread(new Booking(manager, users.get(i).getFlightNumber(), users.get(i).getNumSeats(), users.get(i).getName()));
+                    threads[i].start();
+                }
+                for (Thread thread : threads) {
+                    try {
+                        thread.join();
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        });
+
+    }
+}
+
