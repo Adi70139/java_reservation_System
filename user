@@ -1,0 +1,23 @@
+class User {
+    private String name;
+    private String flightNumber;
+    private int numSeats;
+
+    public User(String name, String flightNumber, int numSeats) {
+        this.name = name;
+        this.flightNumber = flightNumber;
+        this.numSeats = numSeats;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getFlightNumber() {
+        return flightNumber;
+    }
+
+    public int getNumSeats() {
+        return numSeats;
+    }
+}
